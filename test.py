@@ -1,2 +1,3 @@
-for i in range(3, -1, -1):
-    print(i)
+buf = ""
+buf[0] = 'a'
+print(buf)

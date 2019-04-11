@@ -1,4 +1,3 @@
-let num = "i am smart";
-let arr = {};
-arr[num] = 4;
-console.log(arr);
+let list = [1, 2, 3];
+let q = [list[0]];
+  console.log(list.splice(1));
