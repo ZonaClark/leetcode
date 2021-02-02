@@ -25,7 +25,19 @@ var length_of_longest_substring = function(s, k) {
 console.log(characterReplacement("abccde", 1))
 
 
-// aaababbaaacc
-// 3
-// a - 7
-// a - 6
+const length_of_longest_substring2 = function(arr, k) {
+  let frontPointer = 0, maxLength = 0, maxOnesCount = 0
+  for (endPointer = 0; endPointer < arr.length; endPointer++) {
+    if (arr[endPointer] === 1) {
+      maxOnesCount += 1
+    }
+    if (endPointer - frontPointer + 1 - maxOnesCount > k) {
+      if (arr[frontPointer] === 1) {
+        maxOnesCount -= 1
+      }
+      frontPointer += 1
+    }
+    maxLength = Math.max(maxLength, endPointer - frontPointer + 1)
+  }
+  return maxLength;
+};
