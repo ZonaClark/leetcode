@@ -1,1 +1,1 @@
-console.log('sdlf+kj'.includes('+'));
+console.log(5 / 2 + 2);
