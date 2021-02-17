@@ -1,5 +1,4 @@
-let bit = 1;
-console.log(1100 & 0100);
+'001'.forEach(console.log);
 
 // 011001
 // 000001
