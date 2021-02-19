@@ -1,4 +1,3 @@
-'001'.forEach(console.log);
+const dp = Array(3).map(() => Array(4));
 
-// 011001
-// 000001
+console.log(dp);
