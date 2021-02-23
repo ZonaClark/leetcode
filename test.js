@@ -1,1 +1,1 @@
-console.log(''.length);
+console.log(-11 % 6);
