@@ -1,46 +1,64 @@
-const find_trees = function (nodes, edges) {
-  const graph = {},
-    heightArr = [],
-    result = [];
-  for (let i = 0; i < nodes; i++) {
-    graph[i] = new Set();
+const Deque = require('./collections/deque'); //http://www.collectionsjs.com
+
+function find_trees(nodes, edges) {
+  if (nodes <= 0) {
+    return [];
   }
-  for ([first, second] of edges) {
-    graph[first].add(second);
-    graph[second].add(first);
+
+  // with only one node, since its in-degrees will be 0, therefore, we need to handle it separately
+  if (nodes === 1) {
+    return [0];
   }
-  let minHeight = Number.MAX_SAFE_INTEGER;
-  for (let i = 0; i < nodes; i++) {
-    const heightFromNode = calcMaxHeight(i, -1, graph);
-    minHeight = Math.min(minHeight, heightFromNode);
-    heightArr.push(heightFromNode);
-  }
-  heightArr.forEach((height, i) => {
-    if (height === minHeight) {
-      result.push(i);
+
+  // a. Initialize the graph
+  const inDegree = Array(nodes).fill(0); // count of incoming edges
+  const graph = Array(nodes)
+    .fill(0)
+    .map(() => Array()); // adjacency list graph
+
+  // b. Build the graph
+  edges.forEach((edge) => {
+    let n1 = edge[0],
+      n2 = edge[1];
+    // since this is an undirected graph, therefore, add a link for both the nodes
+    graph[n1].push(n2);
+    graph[n2].push(n1);
+    // increment the in-degrees of both the nodes
+    inDegree[n1] += 1;
+    inDegree[n2] += 1;
+  });
+
+  // c. Find all leaves i.e., all nodes with 1 in-degrees
+  const leaves = new Deque();
+  for (i = 0; i < inDegree.length; i++) {
+    if (inDegree[i] === 1) {
+      leaves.push(i);
     }
-  });
-  return result;
-};
-
-const calcMaxHeight = (node, excludedNode, graph) => {
-  let children = new Set(graph[node]);
-  if (excludedNode !== -1) {
-    children.delete(excludedNode);
   }
-  if (children.size < 1) return 1;
-  let maxHeight = Number.MIN_SAFE_INTEGER;
-  Array.from(children).forEach((child) => {
-    maxHeight = Math.max(maxHeight, 1 + calcMaxHeight(child, node, graph));
-  });
-  return maxHeight;
-};
 
-// 0: [1]
-// 1: [0, 2, 3]
-// 2: [1, 4]
-// 3: [1]
-// 4: [2]
+  // d. Remove leaves level by level and subtract each leave's children's in-degrees.
+  // Repeat this until we are left with 1 or 2 nodes, which will be our answer.
+  // Any node that has already been a leaf cannot be the root of a minimum height tree, because
+  // its adjacent non-leaf node will always be a better candidate.
+  let totalNodes = nodes;
+  while (totalNodes > 2) {
+    leavesSize = leaves.length;
+    totalNodes -= leavesSize;
+    for (i = 0; i < leavesSize; i++) {
+      vertex = leaves.shift();
+      // get the node's children to decrement their in-degrees
+      graph[vertex].forEach((child) => {
+        // get the node's children to decrement their in-degrees
+        inDegree[child] -= 1;
+        if (inDegree[child] === 1) {
+          leaves.push(child);
+        }
+      });
+    }
+  }
+
+  return leaves.toArray();
+}
 
 console.log(
   `Roots of MHTs: ${find_trees(5, [
